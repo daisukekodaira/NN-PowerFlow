@@ -1,5 +1,3 @@
-%% 今10000(１万)個のデータの場合になっている
-
 clc;
 
 clear all;
@@ -9,11 +7,11 @@ clear all;
 
 %N=1;kore
 
-T1 = readtable('P_Data_Of_Buses_10000.csv','ReadRowNames',true);
-T1 = table2array(T1);
+T1=readtable('Delta_P_Data_Of_Buses.csv','ReadRowNames',true);
+T1=table2array(T1);
 %T1=T1.';
-T2 = readtable('Q_Data_Of_Buses_10000.csv','ReadRowNames',true);
-T2 = table2array(T2);
+T2=readtable('Delta_Q_Data_Of_Buses.csv','ReadRowNames',true);
+T2=table2array(T2);
 %T2=T2.';
 
 % inputs=T1(N,:);
@@ -22,32 +20,32 @@ T2 = table2array(T2);
 
 %inputs=[T1(1:33,1:1000);T2(1:33,1:1000)];
 
-%inputs = [T1(1:33,1:800);T2(1:33,1:800)];%koreha 1000 konotoki
-inputs=[T1(1:33,1:8000);T2(1:33,1:8000)];
+inputs=[T1(1:33,1:800);T2(1:33,1:800)];%koreha 1000 konotoki
+% inputs=[T1(1:33,1:8000);T2(1:33,1:8000)];
 
 % inputs=T1(N,:);
 
 % inputs={T1(N,:);T2(N,:)};
 
-T3 = readtable('V_Data_Of_Buses_10000.csv');
-T3 = table2array(T3);
-T3 = T3.';
-T4 = readtable('Delta_Data_Of_Buses_10000.csv');
-T4 = table2array(T4);
-T4 = T4.';
+T3=readtable('Delta_V_Data_Of_Buses.csv');
+T3=table2array(T3);
+T3=T3.';
+T4=readtable('Delta_Delta_Data_Of_Buses.csv');
+T4=table2array(T4);
+T4=T4.';
 
 %targets=[T3(:,N),T4(:,N)];de-tabunnkatunomaenitukattetanohakore
 
 %targets=[T3(1:33,1:1000);T4(1:33,1:1000)];
 
-%targets = [T3(1:33,1:800);T4(1:33,1:800)];%koreha 1000 konotoki
-targets=[T3(1:33,1:8000);T4(1:33,1:8000)];
+targets=[T3(1:33,1:800);T4(1:33,1:800)];%koreha 1000 konotoki
+% targets=[T3(1:33,1:8000);T4(1:33,1:8000)];
 
 % targets={T3(N,:),T4(N,:)};
 
-x = inputs;
+x=inputs;
 
-t = targets;
+t=targets;
 
 % [x,t] = simplefit_dataset;
 
@@ -59,7 +57,7 @@ t = targets;
 % 10.
 % net = fitnet(10);
 % net=fitnet([20,20],'trainscg');
-net = fitnet(10,'trainlm');
+net=fitnet(10,'trainlm');
 %%
 % View the network.
 % view(net)
@@ -76,14 +74,14 @@ view(net)
 % You can see that the sizes of the input and output are 1.
 %%
 % Estimate the targets using the trained network.
-%NetOutputY = net([T1(1:33,801:1000);T2(1:33,801:1000)]);%koreha 1000 konotoki
-NetOutputY = net([T1(1:33,8001:10000);T2(1:33,8001:10000)]);
+NetOutputY = net([T1(1:33,801:1000);T2(1:33,801:1000)]);%koreha 1000 konotoki
+% NetOutputY = net([T1(1:33,8001:10000);T2(1:33,8001:10000)]);
 MeanNetOutputY = mean(NetOutputY,2);
 %%
 % Assess the performance of the trained network. The default performance function is mean squared error.
-%trainlmperf = perform(net,y,[T3(1:33,801:1000);T4(1:33,801:1000)])
-%PowerFlowCalculationY = [T3(1:33,801:1000);T4(1:33,801:1000)];%koreha 1000 konotoki
-PowerFlowCalculationY = [T3(1:33,8001:10000);T4(1:33,8001:10000)];
+%trainlmperf = perform(net,y,[T3(1:33,801:1000);T4(1:33,801:1000)])%これを変える必要がある。やるべきことは、perform関数の仕様の把握とその戻り値がわからないうちはこの関数を使わないで例の実装をすること。
+PowerFlowCalculationY = [T3(1:33,801:1000);T4(1:33,801:1000)];%koreha 1000 konotoki
+% PowerFlowCalculationY = [T3(1:33,8001:10000);T4(1:33,8001:10000)];
 MeanPowerFlowCalculationY = mean(PowerFlowCalculationY,2);
 
 error = MeanNetOutputY-MeanPowerFlowCalculationY;
@@ -101,7 +99,6 @@ ylabel('母線の電圧値[p.u.]');
 title('各母線の電圧値');
 figure(f3);
 plot(1:1:33,error(1:33));
-axis auto;
 xlabel('母線番号');
 ylabel('NN出力電圧値-潮流計算電圧値[p.u.]');
 title('各母線の電圧値の誤差');
@@ -114,7 +111,6 @@ ylabel('母線の電圧の位相角の値[p.u.]');
 title('各母線の電圧の位相角の値');
 figure(f1);
 plot(1:1:33,error(34:66));
-axis auto;
 xlabel('母線番号');
 ylabel('NN出力電圧位相角値-潮流計算電圧位相角値[p.u.]');
 title('各母線の電圧の位相角の値の誤差');
