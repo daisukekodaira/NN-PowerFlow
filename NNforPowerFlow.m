@@ -50,8 +50,8 @@ function NNforPowerFlow
     histogram(err(:,1:numOfCases)); % error about Voltage
     figure;
     histogram(err(:,numOfCases+1:end)); % error about phesor(delta)
-%     % Display standard deviation of the error distribution (what )
-%     sigma = getStdDev();
+    % Display standard deviation of the error distribution (what )
+    sigma = getStdDev();
 %     % Display the Voltage and Delta graph for the best case (minimum error case)
 %     % Display the Voltage and Delta graph for the worst case (max error case)
 %     describeGraphs();
